@@ -1,14 +1,28 @@
 require 'csv'
+require_relative '../app/models/legislator.rb'
+# require 'byebug'
 
 class SunlightLegislatorsImporter
   def self.import(filename)
     csv = CSV.new(File.open(filename), :headers => true)
     csv.each do |row|
+
+      legislator = Legislator.new
+
       row.each do |field, value|
         # TODO: begin
-        raise NotImplementedError, "TODO: figure out what to do with this row and do it!"
+        # raise NotImplementedError, "TODO: figure out what to do with this row and do it!"
+        # byebug
+        case field
+        when "birthdate" then legislator[field] = Date.strptime(value, "%m/%d/%Y")
+        when "phone" then legislator[field] = value.gsub(/[^0-9]/, "")
+        else legislator[field] = value if legislator.attributes.has_key?(field)
+        end
         # TODO: end
       end
+
+      legislator.save
+
     end
   end
 end
